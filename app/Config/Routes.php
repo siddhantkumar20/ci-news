@@ -18,11 +18,15 @@ $routes->post('logout', [Home::class, 'logoutUser']);
 
 $routes->get('editprofile', [Home::class, 'editprofile']);
 $routes->post('editprofile', [Home::class, 'editprofileUser']);
+
 $routes->get('changepassword', [Home::class, 'changepassword']);
 $routes->post('changepassword', [Home::class, 'changepasswordUser']);
 
 $routes->get('forgotpassword', [Home::class, 'forgotpassword']);
 $routes->post('forgotpassword', [Home::class, 'forgotpasswordUser']);
+
+$routes->get('setpassword', [Home::class, 'setpassword']);
+$routes->post('setpassword', [Home::class, 'setpasswordUser']);
 
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');

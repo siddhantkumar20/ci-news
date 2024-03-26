@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\People;
 use Config\Session;
 use Config\Validation;
+use Config\Email;
 
 class Home extends BaseController
 {
@@ -14,16 +15,19 @@ class Home extends BaseController
         return view('welcome_message');
     }
 
+    // Registration Page
     public function registration()
     {
         return view('registration');
     }
 
+    // Login Page 
     public function login()
     {
         return view('login');
     }
 
+    // Forgot Password Page
     public function forgotpassword()
     {
         return view('forgotpassword');
@@ -202,7 +206,6 @@ class Home extends BaseController
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $userId = session()->get('user_id');
-        $people = new People();
         $user = $people->find($userId);
 
         $data = [
@@ -224,7 +227,7 @@ class Home extends BaseController
         return redirect()->to(base_url('login'));
     }
 
-    // Forgot Password
+    // Forgot Password Functionality
     public function forgotpasswordUser(){
 
         $validation = \Config\Services::validation();
@@ -243,15 +246,71 @@ class Home extends BaseController
         $user = $people->where('email', $email)->first();
 
         if($user){
+            $sessionKey = uniqid();
+            $sessionId = $user['id'];
+
+            session()->set('reset_id', $sessionId);
+            session()->set('reset_key', $sessionKey);
+
+            $resetlink = base_url("setpassword?key=$sessionKey&id=$sessionId");
+
             $email = \Config\Services::email();
             $email->setTo($user['email']);
             $email->setSubject('Password Reset');
-            $email->setMessage('Hello, please reset your password using the link provided.');
+            $email->setMessage("Hello, please reset your password using the link provided: <a href='$resetlink'>Reset Link</a> ");
+            $email->setMailType('html');
             $email->send();
             
             return redirect()->to(base_url('forgotpassword'))->with('success', 'Mail Sent!!');
         }else{
             return redirect()->to(base_url('forgotpassword'))->withInput()->with('danger', 'Email not registered');
+        }
+    }
+
+    // Set Password Page
+    public function setpassword(){
+        $key = $this->request->getGet('key');
+        $id = $this->request->getGet('id');
+        
+        if($key && $id && $key === (session()->get('reset_key')) && $id === (session()->get('reset_id'))) {
+            return view('setpassword');
+        } else {
+            return redirect()->to(base_url('forgotpassword'))->withInput()->with('danger', 'Link Already Used');
+        }
+    }
+
+    // Set Password Functionality
+    public function setpasswordUser(){
+        $validation = \Config\Services::validation();
+
+        $validation->setRules([
+            'password' => 'required|min_length[8]',
+            'confirm_password' => 'required|matches[password]'
+        ]);
+
+        if(!$validation->withRequest($this->request)->run()){
+            return redirect()->back()->with('validation', $validation);
+        }
+
+        $people = new People();
+        $password = $this->request->getPost('password');
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $userId = session()->get('reset_id');
+        $user = $people->find($userId);
+
+        $data = [
+            'password' => $hashedPassword
+        ];
+
+        $r = $people->update($user, $data);
+
+        if ($r) {
+            session()->remove(['reset_key', 'reset_id']);
+            return redirect()->to(base_url('login'))->with('success', 'Password Updated Successfully');
+
+        } else {
+            return redirect()->back()->with('danger', 'Something Wrong!!');
         }
     }
 }
