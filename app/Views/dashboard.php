@@ -25,14 +25,23 @@
         .form-group{
             margin: 10px;
         }
+        .card-details{
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container d-flex justify-content-center">
     <div class="card col-md-9 col-sm-9 col-lg-6">
         <div>
-            <header><h2>Dashboard</h2></header>
+            <header><h2 class="card-title">Welcome, <?= $user['name'] ?></h2></header>
             
+            <div class="card-details">
+                <p class="card-text"><b>User ID: </b><?= $user['id'] ?></p>
+                <p class="card-text"><b>Email: </b><?= $user['email'] ?></p>
+                <p class="card-text"><b>Address: </b><?= $user['address'] ?></p>
+                <p class="card-text"><b>Phone: </b><?= $user['phone'] ?></p>
+            </div>
 
             <form action="<?= base_url("logout") ?>" method="post">
             <div class="form-group d-flex justify-content-center">

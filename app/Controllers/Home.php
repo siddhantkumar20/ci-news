@@ -24,11 +24,6 @@ class Home extends BaseController
         return view('login');
     }
 
-    public function dashboard()
-    {
-        return view('dashboard');
-    }
-
     public function forgotpassword()
     {
         return view('forgotpassword');
@@ -104,10 +99,25 @@ class Home extends BaseController
         if (!password_verify($password, $user['password'])) {
             return redirect()->to(base_url('login'))->withInput()->with('danger', 'Password Incorrect');
         }
+        session()->set('user', $user);
+        session()->set('logged_in', true);
         return redirect()->to(base_url('dashboard'));
     }
 
+    // Dashboard
+    public function dashboard()
+    {
+        if(!session()->get('logged_in'))
+        {
+            return redirect()->to(base_url('login'));
+        }
+        $user = session()->get('user');
+        return view('dashboard', ['user' => $user]);
+    }
+
+    // Logout Functionality
     public function logoutUser(){
+        session()->remove(['logged_in', 'user']);
         return redirect()->to(base_url('login'));
     }
 }
