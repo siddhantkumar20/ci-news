@@ -243,7 +243,13 @@ class Home extends BaseController
         $user = $people->where('email', $email)->first();
 
         if($user){
-            return redirect()->to(base_url('forgotpassword'))->with('success', 'ID found!!');
+            $email = \Config\Services::email();
+            $email->setTo($user['email']);
+            $email->setSubject('Password Reset');
+            $email->setMessage('Hello, please reset your password using the link provided.');
+            $email->send();
+            
+            return redirect()->to(base_url('forgotpassword'))->with('success', 'Mail Sent!!');
         }else{
             return redirect()->to(base_url('forgotpassword'))->withInput()->with('danger', 'Email not registered');
         }
