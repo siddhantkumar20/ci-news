@@ -162,7 +162,7 @@ class Home extends BaseController
         $r = $people->update($user, $data);
 
         if ($r) {
-            return redirect()->to(base_url('dashboard'))->with('successedit', 'Updated Successfully');
+            return redirect()->to(base_url('dashboard'))->with('successedit', 'Profile Updated Successfully');
         } else {
             return redirect()->to(base_url('editprofile'))->with('danger', 'Something Wrong');
         }
