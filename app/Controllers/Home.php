@@ -223,4 +223,29 @@ class Home extends BaseController
         session()->remove(['logged_in', 'user_id']);
         return redirect()->to(base_url('login'));
     }
+
+    // Forgot Password
+    public function forgotpasswordUser(){
+
+        $validation = \Config\Services::validation();
+        
+        $validation->setRules([
+            'email' => 'required|valid_email',
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->to(base_url('forgotpassword'))->withInput()->with('validation', $validation);
+        }
+
+        $email = $this->request->getPost('email');
+
+        $people = new People();
+        $user = $people->where('email', $email)->first();
+
+        if($user){
+            return redirect()->to(base_url('forgotpassword'))->with('success', 'ID found!!');
+        }else{
+            return redirect()->to(base_url('forgotpassword'))->withInput()->with('danger', 'Email not registered');
+        }
+    }
 }

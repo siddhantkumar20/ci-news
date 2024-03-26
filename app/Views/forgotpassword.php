@@ -36,6 +36,34 @@
         <div class="card col-md-9 col-sm-9 col-lg-6">
             <div>
                 <header><h2 class="card-title">Forgot Password</h2></header>
+
+                <?php if(session()->has('success')): ?>
+                    <div class="alert alert-success" role="alert">
+                        <?= session()->get('success') ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if(session()->has('danger')): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?= session()->get('danger') ?>
+                    </div>
+                <?php endif; ?>
+
+                <form action="<?= base_url('forgotpassword') ?>" method="post">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Enter Email:</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" value="<?= old('email');?>">
+
+                        <?php if (session()->has('validation')) : ?>
+                            <?php $validation = session()->get('validation'); ?>
+                                <div class="text-danger"><?= $validation->getError('email') ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <br>
+                    <div class="form-group d-flex justify-content-center">
+                        <button class="btn btn-success w-50" type="submit">Send Reset Link</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
