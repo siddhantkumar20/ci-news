@@ -115,6 +115,28 @@ class Home extends BaseController
         return view('dashboard', ['user' => $user]);
     }
 
+    // Edit Profile
+    public function editprofile()
+    {
+        if(!session()->get('logged_in'))
+        {
+            return redirect()->to(base_url('login'));
+        }
+        $user = session()->get('user');
+        return view('editprofile', ['user' => $user]);
+    }
+
+    // Change Password
+    public function changepassword()
+    {
+        if(!session()->get('logged_in'))
+        {
+            return redirect()->to(base_url('login'));
+        }
+        $user = session()->get('user');
+        return view('changepassword', ['user' => $user]);
+    }
+
     // Logout Functionality
     public function logoutUser(){
         session()->remove(['logged_in', 'user']);

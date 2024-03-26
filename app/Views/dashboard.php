@@ -36,11 +36,22 @@
         <div>
             <header><h2 class="card-title">Welcome, <?= $user['name'] ?></h2></header>
             
+            <br>
             <div class="card-details">
                 <p class="card-text"><b>User ID: </b><?= $user['id'] ?></p>
                 <p class="card-text"><b>Email: </b><?= $user['email'] ?></p>
                 <p class="card-text"><b>Address: </b><?= $user['address'] ?></p>
                 <p class="card-text"><b>Phone: </b><?= $user['phone'] ?></p>
+            </div>
+
+            <br>
+            
+            <div class="form-group text-center">
+                <a href="<?= base_url('editprofile') ?>"><button class="btn btn-primary w-50">Edit Profile</button></a>
+            </div>
+
+            <div class="form-group text-center">
+                <a href="<?= base_url('changepassword') ?>"><button class="btn btn-primary w-50">Change Password</button></a>
             </div>
 
             <form action="<?= base_url("logout") ?>" method="post">
