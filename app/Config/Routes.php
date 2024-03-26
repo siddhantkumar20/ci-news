@@ -18,7 +18,9 @@ $routes->post('logout', [Home::class, 'logoutUser']);
 
 $routes->get('forgotpassword', [Home::class, 'forgotpassword']);
 $routes->get('editprofile', [Home::class, 'editprofile']);
+$routes->post('editprofile', [Home::class, 'editprofileUser']);
 $routes->get('changepassword', [Home::class, 'changepassword']);
+$routes->post('changepassword', [Home::class, 'changepasswordUser']);
 
 $routes->setDefaultNamespace('App\Controllers');
 $routes->setDefaultController('Home');

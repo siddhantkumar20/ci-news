@@ -99,7 +99,7 @@ class Home extends BaseController
         if (!password_verify($password, $user['password'])) {
             return redirect()->to(base_url('login'))->withInput()->with('danger', 'Password Incorrect');
         }
-        session()->set('user', $user);
+        session()->set('user_id', $user['id']);
         session()->set('logged_in', true);
         return redirect()->to(base_url('dashboard'));
     }
@@ -111,7 +111,9 @@ class Home extends BaseController
         {
             return redirect()->to(base_url('login'));
         }
-        $user = session()->get('user');
+        $userId = session()->get('user_id');
+        $people = new People();
+        $user = $people->find($userId);
         return view('dashboard', ['user' => $user]);
     }
 
@@ -122,9 +124,50 @@ class Home extends BaseController
         {
             return redirect()->to(base_url('login'));
         }
-        $user = session()->get('user');
+        $userId = session()->get('user_id');
+        $people = new People();
+        $user = $people->find($userId);
         return view('editprofile', ['user' => $user]);
     }
+
+    // Updating Profile
+    public function editprofileUser()
+    {
+        $validation = \Config\Services::validation();
+        
+        $validation->setRules([
+            'name' => 'required|min_length[3]|max_length[100]',
+            'address' => 'required|max_length[255]',
+            'phone' => 'required|min_length[10]'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->to(base_url('editprofile'))->withInput()->with('validation', $validation);
+        }
+
+        $userId = session()->get('user_id');
+        $people = new People();
+        $user = $people->find($userId);
+
+        $name = $this->request->getPost('name');
+        $address = $this->request->getPost('address');
+        $phone = $this->request->getPost('phone');
+
+        $data = [
+            'name' => $name,
+            'address' => $address,
+            'phone' => $phone
+        ];
+
+        $r = $people->update($user, $data);
+
+        if ($r) {
+            return redirect()->to(base_url('dashboard'))->with('successedit', 'Updated Successfully');
+        } else {
+            return redirect()->to(base_url('editprofile'))->with('danger', 'Something Wrong');
+        }
+    }
+
 
     // Change Password
     public function changepassword()
@@ -133,13 +176,51 @@ class Home extends BaseController
         {
             return redirect()->to(base_url('login'));
         }
-        $user = session()->get('user');
+        $userID = session()->get('user_id');
+        $people = new People();
+        $user = $people->find($userID);
         return view('changepassword', ['user' => $user]);
+    }
+
+    // Update Password
+    public function changepasswordUser()
+    {
+        $validation = \Config\Services::validation();
+
+        $validation->setRules([
+            'password' => 'required|min_length[8]',
+            'confirm_password' => 'required|matches[password]'
+        ]);
+
+        if(!$validation->withRequest($this->request)->run()){
+            return redirect()->to(base_url('changepassword'))->withInput()->with('validation', $validation);
+        }
+
+        $people = new People();
+
+        $password = $this->request->getPost('password');
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $userId = session()->get('user_id');
+        $people = new People();
+        $user = $people->find($userId);
+
+        $data = [
+            'password' => $hashedPassword
+        ];
+
+        $r = $people->update($user, $data);
+
+        if ($r) {
+            return redirect()->to(base_url('dashboard'))->with('successedit', 'Password Updated Successfully');
+        } else {
+            return redirect()->to(base_url('editprofile'))->with('danger', 'Something Wrong!!');
+        }
     }
 
     // Logout Functionality
     public function logoutUser(){
-        session()->remove(['logged_in', 'user']);
+        session()->remove(['logged_in', 'user_id']);
         return redirect()->to(base_url('login'));
     }
 }

@@ -35,10 +35,22 @@
     <div class="card col-md-9 col-sm-9 col-lg-6">
         <div>
             <header><h2 class="card-title">Welcome, <?= $user['name'] ?></h2></header>
-            
+
+                <?php if(session()->has('successedit')): ?>
+                    <div class="alert alert-success" role="alert">
+                        <?= session()->get('successedit') ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if(session()->has('danger')): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?= session()->get('danger') ?>
+                    </div>
+                <?php endif; ?>
             <br>
             <div class="card-details">
                 <p class="card-text"><b>User ID: </b><?= $user['id'] ?></p>
+                <p class="card-text"><b>Full Name: </b><?= $user['name'] ?></p>
                 <p class="card-text"><b>Email: </b><?= $user['email'] ?></p>
                 <p class="card-text"><b>Address: </b><?= $user['address'] ?></p>
                 <p class="card-text"><b>Phone: </b><?= $user['phone'] ?></p>
