@@ -10,7 +10,7 @@ use Config\Email;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index()
     {
         return view('welcome_message');
     }
@@ -98,7 +98,7 @@ class Home extends BaseController
         $user = $people->where('email', $email)->first();
 
         if (!$user) {
-            return redirect()->to(base_url('login'))->withInput()->with('danger', 'Username Incorrect');
+            return redirect()->to(base_url('login'))->withInput()->with('danger', 'Email Incorrect');
         }
         if (!password_verify($password, $user['password'])) {
             return redirect()->to(base_url('login'))->withInput()->with('danger', 'Password Incorrect');
@@ -261,7 +261,7 @@ class Home extends BaseController
             $email->setMailType('html');
             $email->send();
             
-            return redirect()->to(base_url('forgotpassword'))->with('success', 'Mail Sent!!');
+            return redirect()->to(base_url('forgotpassword'))->with('success', 'Reset link has been sent to your mail');
         }else{
             return redirect()->to(base_url('forgotpassword'))->withInput()->with('danger', 'Email not registered');
         }
